@@ -1,0 +1,12 @@
+.env
+.docker/logs/rabbitmq/*
+!.docker/logs/rabbitmq/.gitkeep
+.docker/logs/nginx/*
+!.docker/logs/nginx/.gitkeep
+
+.docker/database/*
+.docker/queue/*
+!.docker/queue/.gitkeep
+
+backend/*
+!backend/.gitkeep

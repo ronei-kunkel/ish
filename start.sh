@@ -1,5 +1,9 @@
 #!/bin/bash
 
+### ENV
+
+export $(cat .env)
+
 ### Network
 
 if [ -z "$(docker network ls -q -f name=ish_internal)" ]; then
@@ -23,7 +27,7 @@ if [ "$(docker ps -q -f name=ish_mariadb)" ]; then
 else
     echo "O container 'ish_mariadb' será iniciado"
 
-    env $(cat .env) docker run --rm -d -v $(pwd)/.docker/database/:/var/lib/mysql/ -p 3306:3306 --name ish_mariadb --network ish_internal -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_PASSWORD=$DB_PASSWORD -e MARIADB_USER=$DB_USERNAME mariadb:11.0.2
+    docker run --rm -d -v $(pwd)/.docker/database/:/var/lib/mysql/ -p 3306:3306 --name ish_mariadb --network ish_internal -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_PASSWORD=$DB_PASSWORD -e MARIADB_USER=$DB_USERNAME mariadb:11.0.2
 
     echo ""
 fi
@@ -48,7 +52,7 @@ else
     rm -rf $(pwd)/.docker/queue/.erlang.cookie
     rm -rf $(pwd)/.docker/logs/rabbitmq/rabbit.log
 
-    env $(cat .env) docker run --rm -d -v $(pwd)/.docker/queue:/var/lib/rabbitmq -v $(pwd)/.docker/rabbitmq/10-defaults.conf:/etc/rabbitmq/conf.d/10-defaults.conf -v $(pwd)/.docker/logs/rabbitmq:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 --name ish_rabbitmq --network ish_internal -e RABBITMQ_ERLANG_COOKIE=$Q_COOKIE -e RABBITMQ_DEFAULT_USER=$Q_USER -e RABBITMQ_DEFAULT_PASS=$Q_PASS rabbitmq:management
+    docker run --rm -d -v $(pwd)/.docker/queue:/var/lib/rabbitmq -v $(pwd)/.docker/rabbitmq/10-defaults.conf:/etc/rabbitmq/conf.d/10-defaults.conf -v $(pwd)/.docker/logs/rabbitmq:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 --name ish_rabbitmq --network ish_internal -e RABBITMQ_ERLANG_COOKIE=$Q_COOKIE -e RABBITMQ_DEFAULT_USER=$Q_USER -e RABBITMQ_DEFAULT_PASS=$Q_PASS rabbitmq:management
 
     echo ""
 fi

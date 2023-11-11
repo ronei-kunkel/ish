@@ -27,7 +27,7 @@ if [ "$(docker ps -q -f name=ish_mariadb)" ]; then
 else
     echo "O container 'ish_mariadb' será iniciado"
 
-    docker run --rm -d -v $(pwd)/.docker/database/:/var/lib/mysql/ -p 3306:3306 --name ish_mariadb --network ish_internal -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_PASSWORD=$DB_PASSWORD -e MARIADB_USER=$DB_USERNAME mariadb:11.0.2
+    docker run --rm -d -v $(pwd)/.docker/database/:/var/lib/mysql/ -v $(pwd)/.docker/logs/mysql:/var/log/mysql/ -p 3306:3306 --name ish_mariadb --network ish_internal -e MYSQL_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_ROOT_PASSWORD=$DB_PASSWORD -e MARIADB_PASSWORD=$DB_PASSWORD -e MARIADB_USER=$DB_USERNAME mariadb:11.0.2
 
     echo ""
 fi

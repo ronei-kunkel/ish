@@ -4,6 +4,12 @@ ISH is an acronim to Infrastructure for Shared Host. This project is an improve 
 
 ## Run
 
-`cp .env.example .env`
+Copy content of the .env.example to .env
 
-`sudo ./start.sh`
+- `cp .env.example .env`
+
+Adjust env vars in production
+
+Run the script to setup all containers
+
+- `sudo ./start.sh`

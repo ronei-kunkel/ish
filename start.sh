@@ -64,7 +64,7 @@ fi
 ### PHP Image
 
 echo "A imagem 'ish_php82' está sendo criada."
-docker build --quiet --rm -t ish_php82 .
+docker build --rm -t ish_php82 .
 echo ""
 
 ### PHP Container
@@ -84,6 +84,29 @@ fi
 
 
 
+### Hyperf
+
+if [ "$(docker ps -q -f name=ish_hyperf)" ]; then
+    echo "Reiniciando o container 'ish_hyperf'"
+    echo ""
+    docker restart ish_hyperf
+    echo ""
+    echo "Reiniciando o sistema hyperf-manager"
+    docker container exec -it $(docker ps -q -f name=ish_hyperf) sh -c \"cd backend/hyperf-manager && composer start\" -d
+    echo ""
+else
+    echo "O container 'ish_hyperf' será iniciado"
+    docker run -d -v $(pwd)/backend/hyperf-manager:/backend/hyperf-manager --name ish_hyperf -p 9501:9501 --privileged -u root --network ish_internal -it --entrypoint /bin/sh hyperf/hyperf:8.2-alpine-v3.18-swoole
+    echo ""
+    echo "O sistema hyperf-manager será iniciado"
+    docker container exec -it -d $(docker ps -q -f name=ish_hyperf) sh -c "cd backend/hyperf-manager && composer start"
+    echo ""
+fi
+
+
+
+
+
 ### Nginx
 
 if [ "$(docker ps -q -f name=ish_nginx)" ]; then
@@ -96,6 +119,10 @@ else
 
     echo ""
 fi
+
+
+
+
 
 echo "Containers:"
 docker ps -a --filter "status=running" --format 'table {{.Names }} \t {{.Status}}' | grep ish_

@@ -52,7 +52,7 @@ else
     rm -rf $(pwd)/.docker/queue/.erlang.cookie
     rm -rf $(pwd)/.docker/logs/rabbitmq/rabbit.log
 
-    docker run --rm -d -v $(pwd)/.docker/queue:/var/lib/rabbitmq -v $(pwd)/.docker/rabbitmq/10-defaults.conf:/etc/rabbitmq/conf.d/10-defaults.conf -v $(pwd)/.docker/logs/rabbitmq:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 --name ish_rabbitmq --network ish_internal -e RABBITMQ_ERLANG_COOKIE=$Q_COOKIE -e RABBITMQ_DEFAULT_USER=$Q_USER -e RABBITMQ_DEFAULT_PASS=$Q_PASS rabbitmq:management
+    docker run -d -v $(pwd)/.docker/queue:/var/lib/rabbitmq -v $(pwd)/.docker/rabbitmq/10-defaults.conf:/etc/rabbitmq/conf.d/10-defaults.conf -v $(pwd)/.docker/logs/rabbitmq:/var/log/rabbitmq/ -p 5672:5672 -p 15672:15672 --name ish_rabbitmq --network ish_internal -e RABBITMQ_ERLANG_COOKIE=$Q_COOKIE -e RABBITMQ_DEFAULT_USER=$Q_USER -e RABBITMQ_DEFAULT_PASS=$Q_PASS rabbitmq:management
 
     echo ""
 fi

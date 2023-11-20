@@ -63,9 +63,42 @@ fi
 
 ### PHP Image
 
-echo "A imagem 'ish_php82' está sendo criada."
-docker build --rm -t ish_php82 .
-echo ""
+build=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --build)
+            build=true
+            ;;
+        *)
+            ;;
+    esac
+    shift
+done
+
+if [ "$build" = true ]; then
+    if docker images -q "ish_php82"; then
+        echo "A imagem 'ish_php82' está sendo recriada."
+    else
+        echo "A imagem 'ish_php82' está sendo criada."
+    fi
+
+    docker build --rm -t ish_php82 .
+    echo ""
+else
+    if docker images -q "ish_php82"; then
+        echo "A imagem 'ish_php82' não será criada. Usando a já existente. Use o parametro --build para reconstruir a imagem."
+        echo ""
+    else
+        echo "A imagem 'ish_php82' não existe e será criada."
+        docker build --rm -t ish_php82 .
+        echo ""
+    fi
+fi
+
+
+
+
 
 ### PHP Container
 
@@ -84,22 +117,19 @@ fi
 
 
 
-### Hyperf
+### Hyperf (Manager)
 
 if [ "$(docker ps -q -f name=ish_hyperf)" ]; then
     echo "Reiniciando o container 'ish_hyperf'"
     echo ""
     docker restart ish_hyperf
     echo ""
-    echo "Reiniciando o sistema hyperf-manager"
-    docker container exec -it $(docker ps -q -f name=ish_hyperf) sh -c \"cd backend/hyperf-manager && composer start\" -d
+    echo "Reiniciando o sistema Manager"
+    docker container exec -it $(docker ps -q -f name=ish_hyperf) sh -c \"cd backend/manager && composer start\" -d
     echo ""
 else
     echo "O container 'ish_hyperf' será iniciado"
-    docker run -d -v $(pwd)/backend/hyperf-manager:/backend/hyperf-manager --name ish_hyperf -p 9501:9501 --privileged -u root --network ish_internal -it --entrypoint /bin/sh hyperf/hyperf:8.2-alpine-v3.18-swoole
-    echo ""
-    echo "O sistema hyperf-manager será iniciado"
-    docker container exec -it -d $(docker ps -q -f name=ish_hyperf) sh -c "cd backend/hyperf-manager && composer start"
+    docker run --rm -d -v $(pwd)/backend/manager:/backend/manager --name ish_hyperf -p 9501:9501 --privileged -u root --network ish_internal -it --entrypoint "/backend/manager/entrypoint.sh" hyperf/hyperf:8.2-alpine-v3.18-swoole
     echo ""
 fi
 
